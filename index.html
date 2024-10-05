@@ -16,6 +16,17 @@
             background-color: var(--tg-theme-bg-color, #ffffff);
             color: var(--tg-theme-text-color, #000000);
         }
+        .header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
         .search-bar {
             margin-bottom: 20px;
             text-align: center;
@@ -24,6 +35,8 @@
             width: 80%;
             padding: 10px;
             font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
         .video-list {
             display: grid;
@@ -37,6 +50,7 @@
             border-radius: 8px;
             overflow: hidden;
             transition: transform 0.2s;
+            background-color: #f9f9f9;
         }
         .video-item:hover {
             transform: scale(1.05);
@@ -71,16 +85,13 @@
             text-align: center;
             margin-top: 20px;
         }
-        #debug {
-            margin-top: 20px;
-            color: blue;
-            text-align: center;
-        }
     </style>
 </head>
 <body>
     <div id="app">
-        <h1>PlayerVideoBot</h1>
+        <div class="header">
+            <h1>PlayerVideoBot</h1>
+        </div>
         <div class="search-bar">
             <input type="text" id="searchInput" placeholder="Поиск видео..." oninput="filterVideos()">
         </div>
@@ -88,7 +99,6 @@
             <video id="player" controls></video>
         </div>
         <div id="error-message"></div>
-        <div id="debug"></div>
         <div class="video-list" id="videoList"></div>
     </div>
 
@@ -173,21 +183,9 @@
             }
         });
 
-        // Функция для получения параметра из URL
-        function getUrlParameter(name) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(name);
-        }
-
         // Функция для отображения ошибок
         function showError(message) {
             document.getElementById('error-message').textContent = message;
-        }
-
-        // Функция для отображения отладочной информации
-        function showDebug(message) {
-            document.getElementById('debug').textContent = message;
-            console.log(message);
         }
 
         // Функция для фильтрации видео по поисковому запросу
@@ -199,15 +197,6 @@
 
         // Инициализация приложения
         async function init() {
-            const videoUrl = getUrlParameter('video');
-            showDebug('Полученный параметр video: ' + videoUrl);
-
-            if (videoUrl) {
-                const decodedUrl = decodeURIComponent(videoUrl);
-                showDebug('Декодированный URL видео: ' + decodedUrl);
-                playVideo(decodedUrl);
-            }
-
             const videos = await getVideoList();
             allVideos = videos; // Сохранить полный список видео для фильтрации
             displayVideoList(videos);
