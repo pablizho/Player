@@ -26,6 +26,11 @@
             text-align: center;
             margin-top: 20px;
         }
+        #debug {
+            margin-top: 20px;
+            color: blue;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -35,6 +40,7 @@
             <video id="player" controls></video>
         </div>
         <div id="error-message"></div>
+        <div id="debug"></div>
     </div>
 
     <script>
@@ -50,6 +56,10 @@
             document.getElementById('error-message').textContent = message;
         }
 
+        function showDebug(message) {
+            document.getElementById('debug').textContent = message;
+        }
+
         function playVideo(url) {
             const player = document.getElementById('player');
             player.src = url;
@@ -62,12 +72,15 @@
         }
 
         const videoUrl = getUrlParameter('video');
-if (videoUrl) {
-    const decodedUrl = decodeURIComponent(videoUrl);
-    playVideo(decodedUrl);
-} else {
-    showError('URL видео не найден. Пожалуйста, выберите видео через бота.');
-}
+        showDebug('Полученный параметр video: ' + videoUrl);
+
+        if (videoUrl) {
+            const decodedUrl = decodeURIComponent(videoUrl);
+            showDebug('Декодированный URL видео: ' + decodedUrl);
+            playVideo(decodedUrl);
+        } else {
+            showError('URL видео не найден. Пожалуйста, выберите видео через бота.');
+        }
     </script>
 </body>
 </html>
