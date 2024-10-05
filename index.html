@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PlayerVideoBot</title>
+    <title>YouTube Clone для Telegram</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -13,80 +15,119 @@
             background-color: var(--tg-theme-bg-color, #ffffff);
             color: var(--tg-theme-text-color, #000000);
         }
-        #videoPlayer {
+        .video-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .video-item {
+            cursor: pointer;
+            border: 1px solid var(--tg-theme-hint-color, #cccccc);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .video-item img {
             width: 100%;
-            max-width: 640px;
-            margin: 0 auto;
+            height: 150px;
+            object-fit: cover;
+        }
+        .video-info {
+            padding: 10px;
+        }
+        #videoPlayer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
         }
         #player {
-            width: 100%;
-        }
-        #error-message {
-            color: red;
-            text-align: center;
-            margin-top: 20px;
-        }
-        #debug {
-            margin-top: 20px;
-            color: blue;
-            text-align: center;
+            max-width: 90%;
+            max-height: 80%;
         }
     </style>
 </head>
 <body>
     <div id="app">
-        <h1>PlayerVideoBot</h1>
-        <div id="videoPlayer">
-            <video id="player" controls></video>
-        </div>
-        <div id="error-message"></div>
-        <div id="debug"></div>
+        <h1>YouTube Clone для Telegram</h1>
+        <div class="video-list" id="videoList"></div>
+    </div>
+    <div id="videoPlayer">
+        <video id="player" controls></video>
     </div>
 
     <script>
+        // Инициализация Telegram Web App
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        function getUrlParameter(name) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(name);
+        // Инициализация Firebase
+        const firebaseConfig = {
+            // Замените на свои настройки Firebase
+             apiKey: "AIzaSyAI1D7qNvOvU-u3Ti3YT64vblsj0IwRivA",
+            authDomain: "cubgang-6bb7b.firebaseapp.com",
+            projectId: "cubgang-6bb7b",
+            storageBucket: "cubgang-6bb7b.appspot.com",
+            messagingSenderId: "758644876210",
+            appId: "1:758644876210:web:1e02627203198a29de3aab",
+            measurementId: "G-JYVKWJZYMM"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const storage = firebase.storage();
+
+        // Функция для получения списка видео
+        async function getVideoList() {
+            const listRef = storage.ref();
+            const res = await listRef.listAll();
+            return res.items;
         }
 
-        function showError(message) {
-            document.getElementById('error-message').textContent = message;
+        // Функция для отображения списка видео
+        async function displayVideoList() {
+            const videoList = document.getElementById('videoList');
+            try {
+                const videos = await getVideoList();
+                videos.forEach(async (video) => {
+                    const url = await video.getDownloadURL();
+                    const videoItem = document.createElement('div');
+                    videoItem.className = 'video-item';
+                    videoItem.innerHTML = `
+                        <img src="https://via.placeholder.com/200x150" alt="${video.name}">
+                        <div class="video-info">
+                            <h3>${video.name}</h3>
+                        </div>
+                    `;
+                    videoItem.addEventListener('click', () => playVideo(url));
+                    videoList.appendChild(videoItem);
+                });
+            } catch (error) {
+                console.error('Ошибка при получении списка видео:', error);
+            }
         }
 
-        function showDebug(message) {
-            document.getElementById('debug').textContent = message;
-        }
-
+        // Функция для воспроизведения видео
         function playVideo(url) {
-            console.log("Попытка воспроизведения видео:", url);
-            showDebug('Попытка воспроизведения видео: ' + url);
             const player = document.getElementById('player');
+            const videoPlayer = document.getElementById('videoPlayer');
             player.src = url;
-            player.onerror = function(e) {
-                console.error('Ошибка воспроизведения видео:', e.target.error);
-                showError('Ошибка воспроизведения видео: ' + e.target.error.message);
-            };
-            player.play().catch(error => {
-                console.error('Ошибка при попытке воспроизведения:', error);
-                showError('Ошибка при попытке воспроизведения: ' + error.message);
-            });
+            videoPlayer.style.display = 'flex';
+            player.play();
         }
 
-        const videoUrl = getUrlParameter('video');
-        showDebug('Полученный параметр video: ' + videoUrl);
-        console.log('Полученный параметр video:', videoUrl);
+        // Инициализация приложения
+        displayVideoList();
 
-        if (videoUrl) {
-            const decodedUrl = decodeURIComponent(videoUrl);
-            showDebug('Декодированный URL видео: ' + decodedUrl);
-            console.log('Декодированный URL видео:', decodedUrl);
-            playVideo(decodedUrl);
-        } else {
-            showError('URL видео не найден. Пожалуйста, выберите видео через бота.');
-        }
+        // Обработчик закрытия видеоплеера
+        document.getElementById('videoPlayer').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('videoPlayer')) {
+                document.getElementById('videoPlayer').style.display = 'none';
+                document.getElementById('player').pause();
+            }
+        });
     </script>
 </body>
 </html>
