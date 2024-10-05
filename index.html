@@ -21,13 +21,10 @@
         #player {
             width: 100%;
         }
-        #debug {
-            display: none;
+        #error-message {
+            color: red;
+            text-align: center;
             margin-top: 20px;
-            padding: 10px;
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
-            white-space: pre-wrap;
         }
     </style>
 </head>
@@ -37,62 +34,39 @@
         <div id="videoPlayer">
             <video id="player" controls></video>
         </div>
-        <div id="debug"></div>
+        <div id="error-message"></div>
     </div>
 
     <script>
-        // Инициализация Telegram Web App
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        const debugElement = document.getElementById('debug');
-
-        function log(message) {
-            console.log(message);
-            debugElement.textContent += message + '\n';
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
         }
 
-        function getUrlParameter(name) {
-            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-            var results = regex.exec(location.search);
-            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        function showError(message) {
+            document.getElementById('error-message').textContent = message;
         }
 
         function playVideo(url) {
             const player = document.getElementById('player');
-            log('Пытаемся воспроизвести видео: ' + url);
-            
             player.src = url;
             player.onerror = function(e) {
-                log('Ошибка воспроизведения видео: ' + e.target.error.message);
+                showError('Ошибка воспроизведения видео: ' + e.target.error.message);
             };
-            player.onloadedmetadata = function() {
-                log('Метаданные видео загружены. Длительность: ' + player.duration + ' секунд');
-            };
-            
-            player.play().then(() => {
-                log('Воспроизведение началось успешно');
-            }).catch(error => {
-                log('Ошибка при попытке воспроизведения: ' + error.message);
+            player.play().catch(error => {
+                showError('Ошибка при попытке воспроизведения: ' + error.message);
             });
         }
 
         const videoUrl = getUrlParameter('video');
-        log('Полученный URL видео: ' + videoUrl);
-        
         if (videoUrl) {
             playVideo(videoUrl);
         } else {
-            log('URL видео не найден в параметрах');
-            document.getElementById('videoPlayer').innerHTML = '<p>URL видео не найден.</p>';
+            showError('URL видео не найден. Пожалуйста, выберите видео через бота.');
         }
-
-        window.addEventListener('error', function(e) {
-            if (e.target.tagName === 'VIDEO') {
-                log('Ошибка загрузки видео: ' + e.target.src);
-            }
-        }, true);
     </script>
 </body>
 </html>
