@@ -7,65 +7,87 @@
     <style>
         body {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background-color: #000;
+            background-color: #f4f4f4;
             margin: 0;
+            padding: 20px;
+        }
+        .search-bar {
+            width: 100%;
+            max-width: 600px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .video-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .video-card {
+            background-color: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
         }
         video {
             max-width: 100%;
-            height: auto;
-        }
-        .controls {
-            position: absolute;
-            bottom: 10px;
-            width: 90%;
-            display: flex;
-            justify-content: space-between;
-            color: white;
+            border-radius: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="video-container">
-        <video id="videoPlayer" controls>
-            <source id="videoSource" src="https://firebasestorage.googleapis.com/v0/b/your-app-id.appspot.com/o/your-video.mp4?alt=media&token=your-token" type="video/mp4">
-            Ваш браузер не поддерживает воспроизведение видео.
-        </video>
-        <div class="controls">
-            <button onclick="playPause()">Play/Pause</button>
-            <button onclick="mute()">Mute/Unmute</button>
-        </div>
-    </div>
+    <h1>Поиск видео</h1>
+    <input class="search-bar" type="text" id="searchInput" placeholder="Введите название видео" />
+    <button onclick="searchVideos()">Найти видео</button>
+    <div id="videoList" class="video-list"></div>
 
-    <script>
-        const videoPlayer = document.getElementById('videoPlayer');
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
 
-        function playPause() {
-            if (videoPlayer.paused) {
-                videoPlayer.play();
-            } else {
-                videoPlayer.pause();
-            }
+        const firebaseConfig = {
+            apiKey: "your-api-key",
+            authDomain: "your-auth-domain",
+            projectId: "cubgang-6bb7b",
+            storageBucket: "cubgang-6bb7b.appspot.com",
+            messagingSenderId: "your-messaging-sender-id",
+            appId: "your-app-id"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function searchVideos() {
+            const searchValue = document.getElementById('searchInput').value.toLowerCase();
+            const q = query(collection(db, "videos"), where("title", ">=", searchValue), where("title", "<=", searchValue + '\uf8ff'));
+            const querySnapshot = await getDocs(q);
+            const videoList = document.getElementById('videoList');
+            videoList.innerHTML = '';
+
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                const videoElement = `
+                    <div class="video-card" onclick="playVideo('${data.url}')">
+                        <video controls>
+                            <source src="${data.url}" type="video/mp4">
+                        </video>
+                        <p>${data.title}</p>
+                    </div>`;
+                videoList.innerHTML += videoElement;
+            });
         }
 
-        function mute() {
-            videoPlayer.muted = !videoPlayer.muted;
-        }
-
-        // Функция для загрузки видео по параметру в URL
-        function loadVideo(videoUrl) {
-            const videoSource = document.getElementById('videoSource');
-            videoSource.src = videoUrl;
-            videoPlayer.load();
-        }
-
-        // Получаем URL видео из параметров запроса
-        const urlParams = new URLSearchParams(window.location.search);
-        const videoUrl = urlParams.get('videoUrl');
-        if (videoUrl) {
-            loadVideo(videoUrl);
+        function playVideo(url) {
+            const videoPlayer = document.createElement('video');
+            videoPlayer.src = url;
+            videoPlayer.controls = true;
+            videoPlayer.style.width = '100%';  // Устанавливаем ширину плеера
+            videoPlayer.autoplay = true;  // Автозапуск видео
+            videoPlayer.style.marginTop = '20px';  // Отступ сверху
+            document.body.appendChild(videoPlayer);  // Добавляем видео плеер на страницу
         }
     </script>
 </body>
