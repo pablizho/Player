@@ -52,12 +52,11 @@
     </style>
 </head>
 <body>
-    <div id="app">
+     <div id="app">
         <h1>YouTube Clone для Telegram</h1>
-        <div class="video-list" id="videoList"></div>
-    </div>
-    <div id="videoPlayer">
-        <video id="player" controls></video>
+        <div id="videoPlayer">
+            <video id="player" controls></video>
+        </div>
     </div>
 
     <script>
@@ -79,12 +78,9 @@
         firebase.initializeApp(firebaseConfig);
         const storage = firebase.storage();
 
-        // Функция для получения списка видео
-        async function getVideoList() {
-            const videoRef = storage.ref();
-            const videoFiles = await videoRef.listAll();
-            return videoFiles.items;
-        }
+        // Получение URL видео из параметров запроса
+        const urlParams = new URLSearchParams(window.location.search);
+        const videoUrl = urlParams.get('video');
 
         // Функция для отображения списка видео
         async function displayVideoList() {
@@ -104,13 +100,10 @@
             });
         }
 
-        // Функция для воспроизведения видео
-        async function playVideo(video) {
-            const url = await video.getDownloadURL();
+        // Воспроизведение видео, если URL предоставлен
+        if (videoUrl) {
             const player = document.getElementById('player');
-            const videoPlayer = document.getElementById('videoPlayer');
-            player.src = url;
-            videoPlayer.style.display = 'flex';
+            player.src = videoUrl;
             player.play();
         }
 
