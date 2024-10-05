@@ -5,55 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Видеоплеер</title>
     <style>
-        body { display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        video { max-width: 100%; }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000;
+            margin: 0;
+        }
+        video {
+            max-width: 100%;
+            height: auto;
+        }
+        .controls {
+            position: absolute;
+            bottom: 10px;
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+            color: white;
+        }
     </style>
 </head>
 <body>
-
-    <script type="module">
-        // Импортируем функции, необходимые для работы с Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-analytics.js";
-
-        // Конфигурация вашего веб-приложения Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyAI1D7qNvOvU-u3Ti3YT64vblsj0IwRivA",
-            authDomain: "cubgang-6bb7b.firebaseapp.com",
-            projectId: "cubgang-6bb7b",
-            storageBucket: "cubgang-6bb7b.appspot.com",
-            messagingSenderId: "758644876210",
-            appId: "1:758644876210:web:1e02627203198a29de3aab",
-            measurementId: "G-JYVKWJZYMM"
-        };
-
-        // Инициализация Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-    </script>
-
-    <!-- Элемент video для воспроизведения видео -->
-    <video id="videoPlayer" controls>
-        Ваш браузер не поддерживает встроенное видео.
-    </video>
+    <div class="video-container">
+        <video id="videoPlayer" controls>
+            <source id="videoSource" src="https://firebasestorage.googleapis.com/v0/b/your-app-id.appspot.com/o/your-video.mp4?alt=media&token=your-token" type="video/mp4">
+            Ваш браузер не поддерживает воспроизведение видео.
+        </video>
+        <div class="controls">
+            <button onclick="playPause()">Play/Pause</button>
+            <button onclick="mute()">Mute/Unmute</button>
+        </div>
+    </div>
 
     <script>
-        // Функция для замены видео
+        const videoPlayer = document.getElementById('videoPlayer');
+
+        function playPause() {
+            if (videoPlayer.paused) {
+                videoPlayer.play();
+            } else {
+                videoPlayer.pause();
+            }
+        }
+
+        function mute() {
+            videoPlayer.muted = !videoPlayer.muted;
+        }
+
+        // Функция для загрузки видео по параметру в URL
         function loadVideo(videoUrl) {
-            const videoPlayer = document.getElementById('videoPlayer');
-            videoPlayer.src = videoUrl;  // Задаем src для видео плеера
-            videoPlayer.load();           // Перезагружаем плеер, чтобы обновить видео
-            videoPlayer.play();           // Автоматически начинаем воспроизведение
+            const videoSource = document.getElementById('videoSource');
+            videoSource.src = videoUrl;
+            videoPlayer.load();
         }
 
-        // Получаем URL видео из параметра URL
-        function getQueryParam(param) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(param);
-        }
-
-        // Загружаем видео из параметра, если он передан
-        const videoUrl = getQueryParam('videoUrl');
+        // Получаем URL видео из параметров запроса
+        const urlParams = new URLSearchParams(window.location.search);
+        const videoUrl = urlParams.get('videoUrl');
         if (videoUrl) {
             loadVideo(videoUrl);
         }
