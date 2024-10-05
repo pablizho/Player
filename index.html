@@ -46,38 +46,56 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
+        import { getStorage, ref, listAll, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-storage.js";
 
         const firebaseConfig = {
-    apiKey: "AIzaSyAI1D7qNvOvU-u3Ti3YT64vblsj0IwRivA",
-    authDomain: "cubgang-6bb7b.firebaseapp.com",
-    projectId: "cubgang-6bb7b",
-    storageBucket: "cubgang-6bb7b.appspot.com",
-    messagingSenderId: "758644876210",
-    appId: "1:758644876210:web:1e02627203198a29de3aab",
-    measurementId: "G-JYVKWJZYMM"
+            apiKey: "AIzaSyAI1D7qNvOvU-u3Ti3YT64vblsj0IwRivA",
+            authDomain: "cubgang-6bb7b.firebaseapp.com",
+            projectId: "cubgang-6bb7b",
+            storageBucket: "cubgang-6bb7b.appspot.com",
+            messagingSenderId: "758644876210",
+            appId: "1:758644876210:web:1e02627203198a29de3aab",
+            measurementId: "G-JYVKWJZYMM"
         };
 
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        const storage = getStorage(app);
+        const videoListElement = document.getElementById('videoList');
+
+        async function fetchVideos() {
+            const listRef = ref(storage, ''); // Указываем путь к вашей папке, если она есть
+            const res = await listAll(listRef);
+            const videoPromises = res.items.map(async (itemRef) => {
+                const url = await getDownloadURL(itemRef);
+                return {
+                    name: itemRef.name,
+                    url: url
+                };
+            });
+
+            return Promise.all(videoPromises);
+        }
 
         async function searchVideos() {
             const searchValue = document.getElementById('searchInput').value.toLowerCase();
-            const q = query(collection(db, "videos"), where("title", ">=", searchValue), where("title", "<=", searchValue + '\uf8ff'));
-            const querySnapshot = await getDocs(q);
-            const videoList = document.getElementById('videoList');
-            videoList.innerHTML = '';
+            const videos = await fetchVideos();
+            const filteredVideos = videos.filter(video => video.name.toLowerCase().includes(searchValue));
+            videoListElement.innerHTML = '';
 
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
+            if (filteredVideos.length === 0) {
+                videoListElement.innerHTML = "<p>Нет результатов</p>";
+                return;
+            }
+
+            filteredVideos.forEach(video => {
                 const videoElement = `
-                    <div class="video-card" onclick="playVideo('${data.url}')">
+                    <div class="video-card" onclick="playVideo('${video.url}')">
                         <video controls>
-                            <source src="${data.url}" type="video/mp4">
+                            <source src="${video.url}" type="video/mp4">
                         </video>
-                        <p>${data.title}</p>
+                        <p>${video.name}</p>
                     </div>`;
-                videoList.innerHTML += videoElement;
+                videoListElement.innerHTML += videoElement;
             });
         }
 
