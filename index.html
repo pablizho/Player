@@ -62,11 +62,12 @@
         }
 
         const videoUrl = getUrlParameter('video');
-        if (videoUrl) {
-            playVideo(videoUrl);
-        } else {
-            showError('URL видео не найден. Пожалуйста, выберите видео через бота.');
-        }
+if (videoUrl) {
+    const decodedUrl = decodeURIComponent(videoUrl);
+    playVideo(decodedUrl);
+} else {
+    showError('URL видео не найден. Пожалуйста, выберите видео через бота.');
+}
     </script>
 </body>
 </html>
