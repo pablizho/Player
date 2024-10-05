@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YouTube Clone для Telegram</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,49 +13,22 @@
             background-color: var(--tg-theme-bg-color, #ffffff);
             color: var(--tg-theme-text-color, #000000);
         }
-        .video-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-        }
-        .video-item {
-            cursor: pointer;
-            border: 1px solid var(--tg-theme-hint-color, #cccccc);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        .video-item img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-        }
-        .video-info {
-            padding: 10px;
-        }
         #videoPlayer {
-            position: fixed;
-            top: 0;
-            left: 0;
             width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            display: none;
-            justify-content: center;
-            align-items: center;
+            max-width: 640px;
+            margin: 0 auto;
         }
         #player {
-            max-width: 90%;
-            max-height: 80%;
+            width: 100%;
         }
     </style>
 </head>
 <body>
     <div id="app">
         <h1>YouTube Clone для Telegram</h1>
-        <div class="video-list" id="videoList"></div>
-    </div>
-    <div id="videoPlayer">
-        <video id="player" controls></video>
+        <div id="videoPlayer">
+            <video id="player" controls></video>
+        </div>
     </div>
 
     <script>
@@ -65,65 +36,30 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Инициализация Firebase
-        const firebaseConfig = {
-            // Замените на свои настройки Firebase
-            apiKey: "AIzaSyAI1D7qNvOvU-u3Ti3YT64vblsj0IwRivA",
-            authDomain: "cubgang-6bb7b.firebaseapp.com",
-            projectId: "cubgang-6bb7b",
-            storageBucket: "cubgang-6bb7b.appspot.com",
-            messagingSenderId: "758644876210",
-            appId: "1:758644876210:web:1e02627203198a29de3aab",
-            measurementId: "G-JYVKWJZYMM"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const storage = firebase.storage();
-
-        // Функция для получения списка видео
-        async function getVideoList() {
-            const videoRef = storage.ref();
-            const videoFiles = await videoRef.listAll();
-            return videoFiles.items;
-        }
-
-        // Функция для отображения списка видео
-        async function displayVideoList() {
-            const videoList = document.getElementById('videoList');
-            const videos = await getVideoList();
-            videos.forEach(video => {
-                const videoItem = document.createElement('div');
-                videoItem.className = 'video-item';
-                videoItem.innerHTML = `
-                    <img src="https://via.placeholder.com/200x150" alt="${video.name}">
-                    <div class="video-info">
-                        <h3>${video.name}</h3>
-                    </div>
-                `;
-                videoItem.addEventListener('click', () => playVideo(video));
-                videoList.appendChild(videoItem);
-            });
+        // Функция для получения параметров URL
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
         }
 
         // Функция для воспроизведения видео
-        async function playVideo(video) {
-            const url = await video.getDownloadURL();
+        function playVideo(url) {
             const player = document.getElementById('player');
-            const videoPlayer = document.getElementById('videoPlayer');
             player.src = url;
-            videoPlayer.style.display = 'flex';
             player.play();
         }
 
-        // Инициализация приложения
-        displayVideoList();
-
-        // Обработчик закрытия видеоплеера
-        document.getElementById('videoPlayer').addEventListener('click', (e) => {
-            if (e.target === document.getElementById('videoPlayer')) {
-                document.getElementById('videoPlayer').style.display = 'none';
-                document.getElementById('player').pause();
-            }
-        });
+        // Получаем URL видео из параметров
+        const videoUrl = getUrlParameter('video');
+        
+        // Если URL видео присутствует, воспроизводим его
+        if (videoUrl) {
+            playVideo(videoUrl);
+        } else {
+            document.getElementById('videoPlayer').innerHTML = '<p>URL видео не найден.</p>';
+        }
     </script>
 </body>
 </html>
