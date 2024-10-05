@@ -26,11 +26,6 @@
             text-align: center;
             margin-top: 20px;
         }
-        #debug-info {
-            margin-top: 20px;
-            font-size: 12px;
-            color: #888;
-        }
     </style>
 </head>
 <body>
@@ -40,7 +35,6 @@
             <video id="player" controls></video>
         </div>
         <div id="error-message"></div>
-        <div id="debug-info"></div>
     </div>
 
     <script>
@@ -54,10 +48,6 @@
 
         function showError(message) {
             document.getElementById('error-message').textContent = message;
-        }
-
-        function showDebugInfo(info) {
-            document.getElementById('debug-info').textContent = info;
         }
 
         function playVideo(url) {
@@ -74,10 +64,8 @@
         const videoUrl = getUrlParameter('video');
         if (videoUrl) {
             playVideo(videoUrl);
-            showDebugInfo('URL видео: ' + videoUrl);
         } else {
             showError('URL видео не найден. Пожалуйста, выберите видео через бота.');
-            showDebugInfo('Полный URL страницы: ' + window.location.href);
         }
     </script>
 </body>
