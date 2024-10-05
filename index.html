@@ -3,114 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Видеоплеер</title>
+    <title>Мини YouTube</title>
     <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-        }
-        .search-bar {
-            width: 100%;
-            max-width: 600px;
-            padding: 10px;
-            margin-bottom: 20px;
-        }
-        .video-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-        }
-        .video-card {
-            background-color: white;
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            text-align: center;
-        }
-        video {
-            max-width: 100%;
-            border-radius: 10px;
-        }
+        body { font-family: Arial, sans-serif; }
+        .container { display: flex; flex-direction: column; align-items: center; }
+        .search-bar { margin: 20px; }
+        .video-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        video { max-width: 100%; }
+        button { padding: 10px; background-color: #2A9D8F; color: white; border: none; }
     </style>
 </head>
 <body>
+
+<div class="container">
     <h1>Поиск видео</h1>
     <input class="search-bar" type="text" id="searchInput" placeholder="Введите название видео" />
-    <button onclick="searchVideos()">Найти видео</button>
+    <button onclick="searchVideos()">Найти</button>
     <div id="videoList" class="video-list"></div>
+</div>
 
-    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-storage.js"></script>
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyAI1D7qNvOvU-u3Ti3YT64vblsj0IwRivA",
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAI1D7qNvOvU-u3Ti3YT64vblsj0IwRivA",
             authDomain: "cubgang-6bb7b.firebaseapp.com",
             projectId: "cubgang-6bb7b",
             storageBucket: "cubgang-6bb7b.appspot.com",
             messagingSenderId: "758644876210",
             appId: "1:758644876210:web:1e02627203198a29de3aab",
             measurementId: "G-JYVKWJZYMM"
-        };
+    };
 
-        // Инициализация Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const storage = firebase.storage();
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-        async function fetchVideos() {
-            const listRef = storage.ref(); // Получаем ссылку на корень хранилища
-            const res = await listRef.listAll(); // Получаем все файлы
-            
-            console.log("Список всех файлов:", res.items); // Логируем все файлы
-            const videoPromises = res.items.map(async (itemRef) => {
-                const url = await itemRef.getDownloadURL(); // Получаем URL видео
-                console.log(`Файл: ${itemRef.name}, URL: ${url}`); // Логируем имя и URL файла
-                return {
-                    name: itemRef.name,
-                    url: url
-                };
-            });
+    async function searchVideos() {
+        const searchValue = document.getElementById('searchInput').value.toLowerCase();
+        const q = query(collection(db, "videos"), where("title", ">=", searchValue), where("title", "<=", searchValue + '\uf8ff'));
+        const querySnapshot = await getDocs(q);
+        const videoList = document.getElementById('videoList');
+        videoList.innerHTML = '';
 
-            return Promise.all(videoPromises); // Возвращаем массив видео
-        }
-
-        async function searchVideos() {
-            const searchValue = document.getElementById('searchInput').value.toLowerCase();
-            const videos = await fetchVideos();
-            const filteredVideos = videos.filter(video => video.name.toLowerCase().includes(searchValue));
-            const videoListElement = document.getElementById('videoList');
-            videoListElement.innerHTML = '';
-
-            if (filteredVideos.length === 0) {
-                videoListElement.innerHTML = "<p>Нет результатов</p>";
-                return;
-            }
-
-            filteredVideos.forEach(video => {
-                const videoElement = `
-                    <div class="video-card" onclick="playVideo('${video.url}')">
-                        <video controls>
-                            <source src="${video.url}" type="video/mp4">
-                        </video>
-                        <p>${video.name}</p>
-                    </div>`;
-                videoListElement.innerHTML += videoElement;
-            });
-        }
-
-        function playVideo(url) {
-            const videoPlayer = document.createElement('video');
-            videoPlayer.src = url;
-            videoPlayer.controls = true;
-            videoPlayer.style.width = '100%';  // Устанавливаем ширину плеера
-            videoPlayer.autoplay = true;  // Автозапуск видео
-            videoPlayer.style.marginTop = '20px';  // Отступ сверху
-            document.body.appendChild(videoPlayer);  // Добавляем видео плеер на страницу
-        }
-    </script>
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            const videoElement = `
+                <div>
+                    <video controls>
+                        <source src="${data.url}" type="video/mp4">
+                    </video>
+                    <p>${data.title}</p>
+                </div>`;
+            videoList.innerHTML += videoElement;
+        });
+    }
+</script>
 </body>
 </html>
