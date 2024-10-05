@@ -61,22 +61,28 @@
         }
 
         function playVideo(url) {
+            console.log("Попытка воспроизведения видео:", url);
+            showDebug('Попытка воспроизведения видео: ' + url);
             const player = document.getElementById('player');
             player.src = url;
             player.onerror = function(e) {
+                console.error('Ошибка воспроизведения видео:', e.target.error);
                 showError('Ошибка воспроизведения видео: ' + e.target.error.message);
             };
             player.play().catch(error => {
+                console.error('Ошибка при попытке воспроизведения:', error);
                 showError('Ошибка при попытке воспроизведения: ' + error.message);
             });
         }
 
         const videoUrl = getUrlParameter('video');
         showDebug('Полученный параметр video: ' + videoUrl);
+        console.log('Полученный параметр video:', videoUrl);
 
         if (videoUrl) {
             const decodedUrl = decodeURIComponent(videoUrl);
             showDebug('Декодированный URL видео: ' + decodedUrl);
+            console.log('Декодированный URL видео:', decodedUrl);
             playVideo(decodedUrl);
         } else {
             showError('URL видео не найден. Пожалуйста, выберите видео через бота.');
