@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Clone для Telegram</title>
+    <title>PlayerVideoBot</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
@@ -22,6 +22,7 @@
             width: 100%;
         }
         #debug {
+            display: none;
             margin-top: 20px;
             padding: 10px;
             background-color: #f0f0f0;
@@ -32,7 +33,7 @@
 </head>
 <body>
     <div id="app">
-        <h1>YouTube Clone для Telegram</h1>
+        <h1>PlayerVideoBot</h1>
         <div id="videoPlayer">
             <video id="player" controls></video>
         </div>
@@ -51,7 +52,6 @@
             debugElement.textContent += message + '\n';
         }
 
-        // Функция для получения параметров URL
         function getUrlParameter(name) {
             name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
             var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
@@ -59,7 +59,6 @@
             return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
         }
 
-        // Функция для воспроизведения видео
         function playVideo(url) {
             const player = document.getElementById('player');
             log('Пытаемся воспроизвести видео: ' + url);
@@ -79,11 +78,9 @@
             });
         }
 
-        // Получаем URL видео из параметров
         const videoUrl = getUrlParameter('video');
         log('Полученный URL видео: ' + videoUrl);
         
-        // Если URL видео присутствует, воспроизводим его
         if (videoUrl) {
             playVideo(videoUrl);
         } else {
@@ -91,7 +88,6 @@
             document.getElementById('videoPlayer').innerHTML = '<p>URL видео не найден.</p>';
         }
 
-        // Добавляем обработчик для отображения ошибок загрузки ресурсов
         window.addEventListener('error', function(e) {
             if (e.target.tagName === 'VIDEO') {
                 log('Ошибка загрузки видео: ' + e.target.src);
