@@ -44,10 +44,9 @@
     <button onclick="searchVideos()">Найти видео</button>
     <div id="videoList" class="video-list"></div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-        import { getStorage, ref, listAll, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-storage.js";
-
+    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-storage.js"></script>
+    <script>
         const firebaseConfig = {
             apiKey: "AIzaSyAI1D7qNvOvU-u3Ti3YT64vblsj0IwRivA",
             authDomain: "cubgang-6bb7b.firebaseapp.com",
@@ -58,28 +57,32 @@
             measurementId: "G-JYVKWJZYMM"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const storage = getStorage(app);
-        const videoListElement = document.getElementById('videoList');
+        // Инициализация Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const storage = firebase.storage();
 
         async function fetchVideos() {
-            const listRef = ref(storage, ''); // Указываем путь к вашей папке, если она есть
-            const res = await listAll(listRef);
+            const listRef = storage.ref(); // Получаем ссылку на корень хранилища
+            const res = await listRef.listAll(); // Получаем все файлы
+            
+            console.log("Список всех файлов:", res.items); // Логируем все файлы
             const videoPromises = res.items.map(async (itemRef) => {
-                const url = await getDownloadURL(itemRef);
+                const url = await itemRef.getDownloadURL(); // Получаем URL видео
+                console.log(`Файл: ${itemRef.name}, URL: ${url}`); // Логируем имя и URL файла
                 return {
                     name: itemRef.name,
                     url: url
                 };
             });
 
-            return Promise.all(videoPromises);
+            return Promise.all(videoPromises); // Возвращаем массив видео
         }
 
         async function searchVideos() {
             const searchValue = document.getElementById('searchInput').value.toLowerCase();
             const videos = await fetchVideos();
             const filteredVideos = videos.filter(video => video.name.toLowerCase().includes(searchValue));
+            const videoListElement = document.getElementById('videoList');
             videoListElement.innerHTML = '';
 
             if (filteredVideos.length === 0) {
