@@ -4,7 +4,7 @@ const stages = [
     text: 'Добро пожаловать в визуальную новеллу о карьере Павла Смирнова, QA инженера.'
   },
   {
-    img: 'https://plus.unsplash.com/premium_photo-1679599982713-0dbc13c954b8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+    img: 'https://www.novo-sibirsk.ru/upload/resize_cache/iblock/bbf/1600_1000_1/photo_zheleznodorozhnyy_most_cherez_ob_detail_zheleznodorozhnyy_most_cherez_ob.jpg',
     text: 'Павел из Новосибирска. Он увлечён тестированием и разработкой мобильных игр.'
   },
   {
