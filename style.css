@@ -1,0 +1,312 @@
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Class to visually hide content while keeping it accessible to screen readers */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap; /* Added for good measure */
+    border: 0;
+}
+
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif; /* More modern font */
+    background-color: #f8f9fa; /* Slightly lighter overall background */
+    color: #343a40; /* Darker text for better contrast */
+    line-height: 1.6;
+    scroll-padding-top: 70px; /* Offset for fixed header */
+}
+
+header {
+    background: #343a40; /* Darker header */
+    color: #ffffff;
+    padding: 1rem 0;
+    text-align: center;
+    position: fixed; /* Make header sticky */
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000; /* Ensure header is above other content */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+}
+
+header nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0; /* Reset margin */
+}
+
+header nav ul li {
+    display: inline;
+    margin: 0 15px; /* Increased margin */
+}
+
+header nav ul li a {
+    color: #f8f9fa; /* Lighter link color */
+    text-decoration: none;
+    font-weight: bold;
+    padding: 5px 10px; /* Add padding for better clickability */
+    border-radius: 4px; /* Rounded corners for links */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+}
+
+header nav ul li a:hover,
+header nav ul li a:focus { /* Added focus for accessibility */
+    background-color: #495057; /* Darker background on hover/focus */
+    color: #ffffff;
+}
+
+
+/* Add padding to the top of the body to prevent content from being hidden by the fixed header */
+body > section:first-of-type {
+    padding-top: 100px; /* Increased to give more space from fixed header */
+}
+
+
+section {
+    padding: 40px 20px; /* Standardized padding for sections */
+    margin-bottom: 0; /* Removed bottom margin for sections, footer will handle spacing */
+    border-bottom: 1px solid #dee2e6; /* Subtle separator between sections */
+}
+
+section:last-of-type {
+    border-bottom: none; /* No border for the last section before footer */
+}
+
+/* Unified Section Heading Style */
+section h2 {
+    text-align: center;
+    margin-bottom: 30px; /* Increased margin for section titles */
+    color: #343a40; /* Consistent heading color */
+    font-size: 2.2em; /* Slightly larger section headings */
+}
+
+
+#about {
+    background-color: #ffffff; /* Cleaner white background */
+}
+
+#about p {
+    font-size: 1.1em;
+    line-height: 1.7;
+    text-align: left; /* Changed from justify for better Russian text readability */
+}
+
+#about img {
+    border: 3px solid #dee2e6; /* Thicker, softer border */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Softer shadow for profile picture */
+    margin-top: 10px; /* Add some space above the image on small screens */
+}
+
+/* Responsive adjustments for About Me section image */
+@media (max-width: 767px) {
+    #about img {
+        float: none;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 20px;
+    }
+}
+
+
+#skills {
+    background-color: #f8f9fa; /* Light gray, consistent with body */
+}
+
+#skills h3 { /* Style for the new subheadings */
+    text-align: center;
+    color: #343a40;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    font-size: 1.6em;
+}
+
+#skills .skills-list { /* Changed from #skills ul */
+    list-style: none;
+    padding-left: 0;
+}
+
+#skills .skills-list li { /* Changed from #skills ul li */
+    background: #e9ecef; /* Slightly different background for skill items */
+    color: #343a40;
+    margin-bottom: 10px; /* Increased margin */
+    padding: 12px 15px; /* Increased padding */
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Subtle shadow for skill items */
+    transition: transform 0.2s ease; /* Add hover effect */
+    word-break: break-word; /* Help wrap long skill names */
+    /* Consider adding a min-height if items become very uneven, e.g., min-height: 50px; */
+}
+
+#skills .skills-list li:hover { /* Changed from #skills ul li:hover */
+    transform: translateY(-3px); /* Lift skill item on hover */
+}
+
+/* Skills column layout for medium and up */
+@media (min-width: 576px) { /* Start two columns earlier */
+    #skills .skills-list { /* Changed from #skills ul */
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px; /* Increased gap */
+    }
+}
+
+@media (min-width: 992px) { /* Three columns for large screens */
+    #skills .skills-list { /* Changed from #skills ul */
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+
+#experience {
+    background-color: #ffffff;
+}
+
+.job-entry {
+    background-color: #f8f9fa; /* Lighter background for job entry */
+    margin-bottom: 25px; /* Increased margin */
+    padding: 20px; /* Increased padding */
+    border-radius: 8px; /* Softer radius */
+    border-left: 5px solid #007bff; /* Brighter accent border (Bootstrap primary blue) */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.07); /* Subtle shadow */
+}
+
+.job-entry h3 {
+    color: #0056b3; /* Darker blue for job titles */
+    margin-bottom: 8px; /* Increased margin */
+}
+
+.job-entry p { /* Company and date */
+    font-style: normal; /* Remove italic */
+    color: #495057; /* Softer color */
+    margin-bottom: 12px;
+    font-weight: bold;
+}
+
+.job-entry ul {
+    list-style-type: '✓ '; /* Custom bullet point */
+    margin-left: 5px; /* Adjust if custom bullet needs space */
+    padding-left: 15px; /* Space for custom bullet */
+}
+
+.job-entry ul li {
+    margin-bottom: 8px; /* Increased margin */
+    line-height: 1.6;
+    color: #343a40;
+}
+
+
+#projects {
+    background-color: #f8f9fa;
+}
+
+#projects h2 {
+    /* Uses unified section heading style */
+}
+
+.projects-container {
+    /* display: grid; */ /* Already set */
+    /* grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); */ /* Already set */
+    gap: 25px; /* Increased gap */
+}
+
+.project-card {
+    background-color: #ffffff; /* White background for cards */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Enhanced shadow for cards */
+    border-left: 5px solid #28a745; /* Green accent (Bootstrap success green) */
+    transition: transform 0.2s ease, box-shadow 0.2s ease; /* Hover effects */
+}
+
+.project-card:hover {
+    transform: translateY(-5px); /* Lift card on hover */
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15); /* Increase shadow on hover */
+}
+
+.project-card img {
+    max-width: 120px; /* Slightly smaller image */
+    border: 2px solid #e9ecef; /* Softer border */
+    /* Other styles already set */
+}
+
+.project-card h3 {
+    color: #1e7e34; /* Darker green for project titles */
+    margin-bottom: 12px;
+    font-size: 1.3em;
+}
+
+.project-card p {
+    font-size: 1em; /* Slightly larger for better readability */
+    color: #495057;
+}
+
+.project-card p strong {
+    color: #343a40; /* Standard dark color for emphasis */
+}
+
+
+#contact {
+    background-color: #343a40; /* Dark background for contact */
+    color: #f8f9fa; /* Light text */
+    padding: 60px 20px; /* More padding */
+}
+
+#contact h2 {
+    color: #ffffff; /* White heading on dark background */
+}
+
+#contact p {
+    font-size: 1.15em; /* Slightly larger */
+    margin-bottom: 25px;
+    color: #e9ecef; /* Lighter paragraph text */
+}
+
+#contact ul li a {
+    color: #ffffff; /* White links */
+    font-weight: bold;
+    padding: 8px 15px;
+    border: 2px solid #ffffff;
+    border-radius: 5px;
+    display: inline-block; /* Allow padding and border */
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#contact ul li a:hover {
+    background-color: #ffffff;
+    color: #343a40; /* Dark text on hover */
+    text-decoration: none;
+}
+
+/* Footer Styling */
+footer {
+    background-color: #212529; /* Even darker for footer */
+    color: #ced4da; /* Improved contrast text color */
+    padding: 30px 20px; /* Increased padding */
+    margin-top: 0; /* Remove margin as sections have bottom border/padding */
+    border-top: 3px solid #343a40;
+}
+
+footer p {
+    margin-bottom: 8px; /* Reduced margin */
+    font-size: 0.95em;
+}
+
+footer a {
+    color: #f8f9fa;
+}
+
+footer a:hover {
+    color: #007bff; /* Blue hover for footer links */
+    text-decoration: underline;
+}
