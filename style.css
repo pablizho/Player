@@ -320,6 +320,7 @@ main.game-container {
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     text-align: center;
+    position: relative;
 }
 
 .stage-image {
@@ -341,4 +342,26 @@ main.game-container {
 
 #next-btn:hover {
     background-color: #dee2e6;
+}
+
+/* 3D Game Styles */
+#game canvas {
+    width: 100%;
+    height: 60vh;
+    display: block;
+    border-radius: 8px;
+}
+
+#overlay {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    max-width: 90%;
+    font-size: 1.1em;
+    text-align: center;
 }
