@@ -3,49 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Квиз по портфолио Павла Смирнова</title>
+    <title>Путешествие по портфолио Павла Смирнова</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        main.game-container {
-            max-width: 800px;
-            margin: 120px auto 40px;
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        #choices button {
-            display: block;
-            width: 100%;
-            margin-bottom: 10px;
-            padding: 10px;
-            font-size: 1em;
-            background: #e9ecef;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-        }
-        #choices button:hover {
-            background-color: #dee2e6;
-        }
-        #result {
-            text-align: center;
-            font-size: 1.3em;
-            margin-top: 20px;
-        }
-    </style>
 </head>
 <body>
     <header>
-        <h1>Квиз по портфолио Павла Смирнова</h1>
+        <h1>Путешествие по портфолио Павла Смирнова</h1>
     </header>
     <main class="game-container">
-        <div id="quiz">
-            <p id="question"></p>
-            <div id="choices"></div>
+        <div id="game">
+            <img id="stage-img" class="stage-image" alt="" src="">
+            <p id="stage-text"></p>
+            <button id="next-btn">Далее</button>
         </div>
-        <div id="result" style="display:none;"></div>
     </main>
     <footer>
         <p>&copy; 2024 Павел Смирнов - Портфолио QA Инженера</p>
