@@ -310,3 +310,35 @@ footer a:hover {
     color: #007bff; /* Blue hover for footer links */
     text-decoration: underline;
 }
+
+/* Game styles */
+main.game-container {
+    max-width: 800px;
+    margin: 120px auto 40px;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.stage-image {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+#next-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 1em;
+    background: #e9ecef;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#next-btn:hover {
+    background-color: #dee2e6;
+}
