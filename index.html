@@ -1,121 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HLS Video Player</title>
-    <style>
-        #videoPlayer {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            height: 100vh;
-            width: 100%;
-            background-color: #000;
-            position: relative;
-        }
-        video {
-            width: 100%;
-            max-height: 50vh;
-            object-fit: cover; /* Заполняет плеер по ширине */
-        }
-        #quality-selector {
-            text-align: center;
-            margin-top: 10px;
-            position: absolute;
-            top: 55vh; /* Отступ от верхней части */
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1;
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 10px;
-            border-radius: 5px;
-            color: white;
-        }
-    </style>
+    <title>Путешествие по портфолио Павла Смирнова</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="videoPlayer">
-        <video id="player" controls></video>
-    </div>
-
-    <div id="quality-selector" style="display: none;">
-        <label for="qualitySelect">Select Quality: </label>
-        <select id="qualitySelect" onchange="changeQuality(this)">
-            <option value="">Auto</option>
-        </select>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <script>
-        function playVideo(url) {
-            const player = document.getElementById('player');
-            const videoPlayer = document.getElementById('videoPlayer');
-            const qualitySelector = document.getElementById('quality-selector');
-            const qualitySelect = document.getElementById('qualitySelect');
-
-            if (Hls.isSupported()) {
-                const hls = new Hls();
-                hls.loadSource(url);
-                hls.attachMedia(player);
-                hls.on(Hls.Events.MANIFEST_PARSED, function () {
-                    player.play();
-
-                    // Создаем опции для выбора качества
-                    const levels = hls.levels;
-                    qualitySelect.innerHTML = '<option value="">Auto</option>';
-                    levels.forEach((level, index) => {
-                        qualitySelect.innerHTML += `<option value="${index}">${level.height}p</option>`;
-                    });
-
-                    qualitySelector.style.display = 'block';
-                });
-
-                hls.on(Hls.Events.LEVEL_SWITCHED, function (event, data) {
-                    console.log('Switched to level:', hls.levels[data.level].height + 'p');
-                });
-
-                hls.on(Hls.Events.ERROR, function (event, data) {
-                    if (data.fatal) {
-                        switch (data.type) {
-                            case Hls.ErrorTypes.NETWORK_ERROR:
-                                console.error('Network error encountered', data);
-                                hls.startLoad(); // Пробуем перезагрузить поток
-                                break;
-                            case Hls.ErrorTypes.MEDIA_ERROR:
-                                console.error('Media error encountered', data);
-                                hls.recoverMediaError(); // Восстанавливаем поток
-                                break;
-                            default:
-                                console.error('Unrecoverable error encountered', data);
-                                hls.destroy(); // Прекращаем работу
-                                break;
-                        }
-                    }
-                });
-
-                // Сохраняем объект HLS для возможности изменения качества
-                window.hls = hls;
-            } else if (player.canPlayType('application/vnd.apple.mpegurl')) {
-                player.src = url;
-                player.addEventListener('loadedmetadata', function () {
-                    player.play();
-                });
-                qualitySelector.style.display = 'none'; // Прячем выбор качества, если HLS не поддерживается
-            }
-
-            videoPlayer.style.display = 'flex';
-        }
-
-        function changeQuality(select) {
-            const level = parseInt(select.value, 10);
-            if (window.hls) {
-                window.hls.currentLevel = level; // Устанавливаем выбранное качество
-            }
-        }
-
-        // Пример вызова
-        playVideo('https://path_to_your_hls_stream.m3u8'); // Здесь должен быть путь к твоему HLS стриму
-    </script>
+    <header>
+        <h1>Путешествие по портфолио Павла Смирнова</h1>
+    </header>
+    <main class="game-container">
+        <div id="game">
+            <img id="stage-img" class="stage-image" alt="" src="">
+            <p id="stage-text"></p>
+            <button id="next-btn">Начать путешествие</button>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 Павел Смирнов - Портфолио QA Инженера</p>
+    </footer>
+    <script src="script.js"></script>
 </body>
 </html>
